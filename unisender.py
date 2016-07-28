@@ -9,6 +9,12 @@ except ImportError:
     requests = None
     raise ImportError('Not found module requests\nrun: pip install requests')
 
+# Unisender API key
+api_key = None
+
+# Language for response: ru - russian, en - english, it - italian
+lang = 'ru'
+
 # Unisender API endpoint
 api_url = 'http://api.unisender.com/%s/api/%s?format=json'
 
@@ -19,26 +25,26 @@ timeout = 60
 requests.adapters.DEFAULT_RETRIES = 10
 
 
-def call(method, params, lang=None):
+def call(method, params):
     """
     Call Unisender API method name
 
     :param method: API method name for calling
     :param params: Params for calling
-    :param lang: (optional) Language for response: ru - russian, en - english, it - italian
     :return: dict API response
     """
 
-    if lang is None:
-        lang = 'ru'
-    elif lang not in ('ru', 'en', 'it'):
+    if lang not in ('ru', 'en', 'it'):
         raise Exception('Unsupported language')
 
     if method == '' or not isinstance(method, basestring):
         raise Exception('Empty Method')
 
-    if 'api_key' not in params:
+    if api_key is None:
         raise Exception('Empty API-key')
+
+    # Add API-key to params
+    params['api_key'] = api_key
 
     params = prepare_params(params)
 
